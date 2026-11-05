@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#173b32">
+    <title>StablePay | Penggajian Coach</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="StablePay beranda">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span>stable<span class="brand-light">pay</span></span>
+      </a>
+      <nav class="topbar-nav">
+        <span class="topbar-note">Sistem Informasi Akuntansi Penggajian</span>
+        <a id="home-nav" class="topbar-link" href="#home" hidden>← Penggajian</a>
+        <a id="admin-nav" class="topbar-link" href="#admin">Admin &amp; Laporan <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="home-view" class="page">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="hero-kicker"><span aria-hidden="true">✦</span> STABLE MANAGEMENT</p>
+          <h1>Rawat setiap detail.<br><span>Majukan setiap langkah.</span></h1>
+          <p class="hero-description">Satu ruang untuk mengelola jadwal, kehadiran, dan penggajian coach equestrian Anda.</p>
+          <div class="hero-actions">
+            <a class="hero-button" href="#workspace">Kelola data <span aria-hidden="true">→</span></a>
+            <a class="hero-link" href="#records">Lihat riwayat</a>
+          </div>
+        </div>
+        <div class="hero-badge"><span class="hero-badge-icon" aria-hidden="true">♞</span><span>RIDING<br><strong>IN BALANCE</strong></span></div>
+        <a class="image-credit" href="https://commons.wikimedia.org/wiki/File:Kamal_Bahamdan_%26_Noblesse_Des_Tess_-_2013_Longines_Global_Champions_Tour.jpg" target="_blank" rel="noreferrer">Foto: Fanny Schertzer / Wikimedia Commons · CC BY 3.0</a>
+      </section>
+
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <div class="basis-note"><span aria-hidden="true">!</span> Mode tanpa login aktif: siapa pun yang membuka aplikasi dapat melihat dan mengubah data coach serta penggajian.</div>
+
+      <section class="stats" aria-label="Ringkasan">
+        <article class="stat-card">
+          <span class="stat-label">Total coach</span>
+          <strong id="coach-count">—</strong>
+          <span class="stat-foot">coach terdaftar</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Kehadiran bulan ini</span>
+          <strong id="attendance-count">—</strong>
+          <span class="stat-foot">catatan kehadiran</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Penggajian tercatat</span>
+          <strong id="payroll-count">—</strong>
+          <span class="stat-foot">periode penggajian</span>
+        </article>
+      </section>
+
+      <section class="workspace" id="workspace">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">DATA OPERASIONAL</p>
+            <h2>Kelola data</h2>
+          </div>
+          <span class="secure-note"><span aria-hidden="true">●</span> Data tersimpan di Supabase</span>
+        </div>
+
+        <div class="forms-grid">
+          <article class="panel">
+            <div class="panel-heading">
+              <span class="panel-icon icon-coach" aria-hidden="true">01</span>
+              <div><h3>Coach</h3><p>Daftarkan coach dan honor per sesi.</p></div>
+            </div>
+            <form id="coach-form" class="form-stack">
+              <label>Nama coach<input name="nama_coach" required maxlength="120" placeholder="Contoh: Nadia Putri"></label>
+              <label>Alamat <span class="optional">(opsional)</span><input name="alamat" maxlength="500" placeholder="Alamat coach"></label>
+              <label>Nomor telepon <span class="optional">(opsional)</span><input name="no_telepon" maxlength="30" placeholder="+62 812 3456 7890"></label>
+              <label>Tarif per sesi (Rp)<input name="tarif_per_sesi" type="number" min="0" step="1000" required placeholder="150000"></label>
+              <button class="button button-primary" type="submit">Simpan coach <span aria-hidden="true">→</span></button>
+            </form>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <span class="panel-icon icon-attendance" aria-hidden="true">02</span>
+              <div><h3>Jadwal mengajar</h3><p>Catat tanggal, jam, jumlah sesi, dan kehadiran.</p></div>
+            </div>
+            <form id="attendance-form" class="form-stack">
+              <label>Coach<select name="id_coach" required><option value="">Pilih coach</option></select></label>
+              <div class="field-row">
+                <label>Tanggal mengajar<input name="tanggal_mengajar" type="date" required></label>
+                <label>Jam mengajar<input name="jam_mengajar" type="time" required></label>
+              </div>
+              <div class="field-row">
+                <label>Jumlah sesi<input name="jumlah_sesi" type="number" min="1" max="24" step="1" required placeholder="1"></label>
+                <label>Status kehadiran<select name="status_kehadiran"><option value="Dijadwalkan">Dijadwalkan</option><option value="Hadir">Hadir</option><option value="Tidak Hadir">Tidak Hadir</option></select></label>
+              </div>
+              <p class="form-hint">Hanya jadwal dengan status Hadir yang dihitung ke dalam total honor.</p>
+              <button class="button button-primary" type="submit">Simpan jadwal <span aria-hidden="true">→</span></button>
+            </form>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <span class="panel-icon icon-payroll" aria-hidden="true">03</span>
+              <div><h3>Penggajian</h3><p>Hitung honor dari sesi hadir coach.</p></div>
+            </div>
+            <form id="payroll-form" class="form-stack">
+              <label>Coach<select name="id_coach" required><option value="">Pilih coach</option></select></label>
+              <div class="field-row">
+                <label>Dari tanggal<input name="period_start" type="date" required></label>
+                <label>Sampai tanggal<input name="period_end" type="date" required></label>
+              </div>
+              <label>Potongan (Rp)<input name="potongan" type="number" min="0" step="1000" value="0" required></label>
+              <p class="form-hint">Honor bersih = jumlah sesi hadir × tarif per sesi − potongan.</p>
+              <button class="button button-primary" type="submit">Buat penggajian <span aria-hidden="true">→</span></button>
+            </form>
+          </article>
+        </div>
+      </section>
+
+      <section class="records" id="records">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PEMANTAUAN</p>
+            <h2>Riwayat</h2>
+          </div>
+        </div>
+        <div class="records-grid">
+          <article class="panel table-panel">
+            <div class="table-heading"><div><h3>Jadwal mengajar</h3><p>Jadwal dan status kehadiran coach</p></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Coach</th><th>Tanggal mengajar</th><th>Jam</th><th>Sesi</th><th>Status kehadiran</th></tr></thead>
+                <tbody id="attendance-rows"><tr><td class="empty" colspan="5">Memuat data...</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+          <article class="panel table-panel">
+            <div class="table-heading"><div><h3>Riwayat penggajian</h3><p>Rincian dan status pembayaran</p></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Coach / periode</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="payroll-rows"><tr><td class="empty" colspan="4">Memuat data...</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer"><span>StablePay</span><span>Penggajian coach equestrian</span></footer>
+    </main>
+
+    <main id="admin-view" class="admin-page" hidden>
+      <section class="admin-intro">
+        <div>
+          <p class="eyebrow">RUANG ADMINISTRATOR</p>
+          <h1>Ringkasan keuangan</h1>
+          <p class="intro-copy">Pantau pembayaran honor dan laporan akuntansi dari proses penggajian.</p>
+        </div>
+        <form id="period-form" class="period-filter">
+          <label>Dari<input name="start" type="date" required></label>
+          <label>Sampai<input name="end" type="date" required></label>
+          <button type="submit">Terapkan</button>
+        </form>
+      </section>
+
+      <div id="admin-notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <div class="basis-note"><span aria-hidden="true">i</span> Laporan menggunakan basis akrual. Pengakuan gaji dicatat saat penggajian diproses; pembayaran mengurangi utang dan kas. Saldo awal akun saat ini diasumsikan nol.</div>
+
+      <section class="summary-grid" aria-label="Ringkasan penggajian">
+        <article class="summary-card"><span>Penggajian periode ini</span><strong id="summary-count">—</strong><small>periode payroll</small></article>
+        <article class="summary-card"><span>Total honor diproses</span><strong id="summary-total">—</strong><small>nilai penggajian</small></article>
+        <article class="summary-card"><span>Sudah dibayar</span><strong id="summary-paid">—</strong><small id="summary-paid-count">— periode</small></article>
+        <article class="summary-card"><span>Belum dibayar</span><strong id="summary-unpaid">—</strong><small id="summary-unpaid-count">— periode</small></article>
+      </section>
+
+      <nav class="report-nav" aria-label="Navigasi laporan">
+        <a href="#payroll">Rekap gaji</a>
+        <a href="#journal">Jurnal umum</a>
+        <a href="#ledger">Buku besar</a>
+        <a href="#trial-balance">Neraca saldo</a>
+        <a href="#statements">Laporan keuangan</a>
+      </nav>
+
+      <section id="payroll" class="report-section">
+        <div class="section-title"><div><p class="eyebrow">PENGGAJIAN</p><h2>Rekap gaji</h2></div><p>Filter berdasarkan tanggal awal periode payroll.</p></div>
+        <article class="panel table-panel">
+          <div class="table-wrap">
+            <table><thead><tr><th>Coach</th><th>Periode</th><th>Jumlah sesi</th><th>Total honor</th><th>Status</th><th>Tanggal bayar</th></tr></thead><tbody id="admin-payroll-rows"><tr><td class="empty" colspan="6">Memuat laporan...</td></tr></tbody></table>
+          </div>
+        </article>
+      </section>
+
+      <section id="journal" class="report-section">
+        <div class="section-title"><div><p class="eyebrow">TRANSAKSI</p><h2>Jurnal umum</h2></div><p>Jurnal pengakuan dan pembayaran honor dibuat otomatis.</p></div>
+        <article class="panel table-panel">
+          <div class="table-wrap">
+            <table><thead><tr><th>Tanggal / No. jurnal</th><th>Akun</th><th>Keterangan</th><th>Debit</th><th>Kredit</th></tr></thead><tbody id="journal-rows"><tr><td class="empty" colspan="5">Memuat jurnal...</td></tr></tbody></table>
+          </div>
+        </article>
+      </section>
+
+      <section id="ledger" class="report-section">
+        <div class="section-title ledger-heading">
+          <div><p class="eyebrow">RINCIAN AKUN</p><h2>Buku besar</h2></div>
+          <label class="account-filter">Pilih akun<select id="account-filter"><option value="">Semua akun</option></select></label>
+        </div>
+        <article class="panel table-panel">
+          <div class="table-wrap">
+            <table><thead><tr><th>Tanggal</th><th>Akun</th><th>Ref. / keterangan</th><th>Debit</th><th>Kredit</th><th>Saldo berjalan</th></tr></thead><tbody id="ledger-rows"><tr><td class="empty" colspan="6">Memuat buku besar...</td></tr></tbody></table>
+          </div>
+        </article>
+      </section>
+
+      <section id="trial-balance" class="report-section">
+        <div class="section-title"><div><p class="eyebrow">SALDO AKUN</p><h2>Neraca saldo</h2></div><p>Saldo kumulatif sampai tanggal akhir periode.</p></div>
+        <article class="panel table-panel">
+          <div class="table-wrap">
+            <table><thead><tr><th>Kode akun</th><th>Nama akun</th><th>Kategori</th><th>Debit</th><th>Kredit</th></tr></thead><tbody id="trial-rows"><tr><td class="empty" colspan="5">Memuat neraca saldo...</td></tr></tbody><tfoot id="trial-total"></tfoot></table>
+          </div>
+        </article>
+      </section>
+
+      <section id="statements" class="report-section">
+        <div class="section-title"><div><p class="eyebrow">LAPORAN KEUANGAN</p><h2>Laporan periode</h2></div><p>Laporan laba rugi dan arus kas sesuai transaksi yang tercatat.</p></div>
+        <div class="statement-grid">
+          <article class="panel statement-card">
+            <div class="statement-title"><span class="statement-icon">01</span><div><h3>Laba rugi</h3><p id="income-period">Periode terpilih</p></div></div>
+            <div id="income-rows" class="statement-lines"></div>
+          </article>
+          <article class="panel statement-card">
+            <div class="statement-title"><span class="statement-icon gold">02</span><div><h3>Arus kas</h3><p id="cash-period">Periode terpilih · metode langsung</p></div></div>
+            <div id="cash-rows" class="statement-lines"></div>
+          </article>
+          <article class="panel statement-card">
+            <div class="statement-title"><span class="statement-icon blue">03</span><div><h3>Posisi keuangan</h3><p id="position-period">Per posisi akhir periode</p></div></div>
+            <div id="position-rows" class="statement-lines"></div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer"><span>StablePay · Admin</span><a href="#home">Kembali ke input penggajian</a></footer>
+    </main>
+  </body>
+</html>
